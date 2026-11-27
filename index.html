@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#183b60"><meta name="description" content="Ứng dụng lập lịch giảng dạy yoga hàng tuần">
+<link rel="manifest" href="manifest.json">
+<title>Khuyến's Yoga Planner</title>
+<style>
+:root{--navy:#183b60;--blue:#dce9f7;--cream:#f5f3e9;--ink:#203b59;--muted:#718096;--line:#d9e0e8;--gold:#c8a96b}
+*{box-sizing:border-box}body{margin:0;background:#f3f6fa;color:#24364b;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+header{background:linear-gradient(130deg,#173858,#244e75);color:white;padding:20px 16px 16px;position:sticky;top:0;z-index:5;box-shadow:0 3px 12px #102b4825}
+.head{max-width:1100px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:10px}.brand{display:flex;align-items:center;gap:11px}.logo{width:44px;height:44px;border:1px solid #d8c79b;border-radius:50%;display:grid;place-items:center;font-size:23px;background:#ffffff12}.brand h1{font-size:17px;line-height:1.2;margin:0}.brand small{color:#d8e5f2;font-size:11px}.top-actions{display:flex;gap:7px}
+button,select,input,textarea{font:inherit}button{border:0;border-radius:10px;padding:10px 13px;cursor:pointer;font-weight:650}.btn-light{background:#ffffff20;color:white;border:1px solid #ffffff40}.btn{background:var(--navy);color:white}.btn-outline{background:white;border:1px solid var(--line);color:var(--ink)}.btn-danger{background:#fff0ef;color:#b33b34}.wrap{max-width:1100px;margin:auto;padding:16px}
+.tabs{display:flex;gap:8px;overflow:auto;margin-bottom:15px}.tab{background:#e6edf5;color:#4c6178;white-space:nowrap}.tab.active{background:var(--navy);color:white}
+.panel{background:white;border:1px solid #e5eaf0;border-radius:16px;padding:15px;box-shadow:0 4px 16px #233d5810;margin-bottom:14px}
+.panel h2{font-size:17px;margin:0 0 12px;color:var(--navy)}.muted{color:var(--muted);font-size:12px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}.toolbar input{max-width:180px}
+input,select,textarea{width:100%;padding:10px 11px;border:1px solid #d5dee8;border-radius:9px;background:white;color:#26384b;min-width:0}label{display:block;font-size:12px;font-weight:700;color:#53677e;margin-bottom:5px}.field{margin-bottom:11px}
+.schedule-scroll{overflow:auto;border:1px solid #d7dce3;border-radius:10px}
+.schedule{border-collapse:collapse;width:100%;min-width:760px;table-layout:fixed;background:var(--cream)}
+.schedule th{background:#d8e7f7;color:#264664;padding:11px 5px;font-size:12px;border:1px solid #aebdce}
+.schedule th:first-child{width:105px}.schedule td{border:1px solid #c9c9c1;height:116px;vertical-align:middle;padding:5px;text-align:center}
+.schedule td.time{background:#d8e7f7;color:#244563;font-weight:750;font-size:12px}
+.slot{height:100%;min-height:100px;width:100%;background:transparent;color:#234363;padding:8px 4px;border-radius:7px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;text-align:center}
+.slot:active{background:#e6edf5}.slot strong{font-size:11px;letter-spacing:.2px}.slot span{font-size:11px;line-height:1.35;font-weight:500}.slot.empty{color:#9aa8b7;border:1px dashed #c8d2dc;min-height:70px}
+.topic-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.topic{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff}.topic h3{margin:0 0 5px;color:var(--navy);font-size:14px}.topic p{margin:0 0 10px;font-size:12px;color:#5c6c7c;line-height:1.45}.topic-actions{display:flex;gap:6px}.topic-actions button{font-size:11px;padding:7px 9px}
+.stats{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.stat{background:#edf3f9;border-radius:10px;padding:9px 12px;font-size:12px;color:#47617b}.stat b{color:var(--navy);font-size:16px;margin-right:5px}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.full{grid-column:1/-1}.hint{font-size:12px;color:#738397;line-height:1.5}
+.modal{position:fixed;inset:0;background:#14283c99;display:none;align-items:flex-end;justify-content:center;z-index:20;padding:12px}.modal.show{display:flex}.dialog{background:white;border-radius:18px 18px 12px 12px;padding:18px;width:min(100%,520px);max-height:90vh;overflow:auto;box-shadow:0 12px 50px #0003}.dialog h2{margin:0 0 14px;color:var(--navy);font-size:18px}.dialog-actions{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin-top:14px}
+.export-card{background:var(--cream);padding:14px;border-radius:12px;text-align:center}
+footer{text-align:center;color:#8391a0;font-size:11px;padding:10px 0 25px}
+@media(min-width:760px){.modal{align-items:center}.schedule td{height:130px}}
+</style></head>
+<body>
+<header><div class="head"><div class="brand"><div class="logo">ॐ</div><div><h1>Khuyến's Yoga Planner</h1><small>Lập giáo án tuần • Quản lý chủ đề • Xuất ảnh</small></div></div><div class="top-actions"><button class="btn-light" id="installBtn" style="display:none">Cài app</button><button class="btn-light" id="backupBtn">Sao lưu</button></div></div></header>
+<main class="wrap">
+<div class="tabs"><button class="tab active" data-tab="schedule">Lịch tuần</button><button class="tab" data-tab="topics">Thư viện chủ đề</button><button class="tab" data-tab="settings">Thông tin & cài đặt</button></div>
+<section id="scheduleView">
+<div class="panel">
+<div class="toolbar"><div style="flex:1;min-width:180px"><label>Tuần bắt đầu</label><input type="date" id="weekDate"></div><button class="btn-outline" id="prevWeek">← Tuần trước</button><button class="btn-outline" id="nextWeek">Tuần sau →</button></div>
+<div class="stats"><div class="stat"><b id="classCount">0</b> buổi đã xếp</div><div class="stat"><b id="topicCount">0</b> chủ đề trong thư viện</div></div>
+<div class="toolbar"><button class="btn-outline" id="copyWeek">Sao chép tuần trước</button><button class="btn-outline" id="clearWeek">Xóa lịch tuần này</button><button class="btn" id="exportBtn">Xuất ảnh lịch tuần</button></div>
+<div class="schedule-scroll"><table class="schedule" id="scheduleTable"></table></div>
+<p class="hint">Chạm vào ô giờ học để chọn chủ đề. Ô trống có dấu ＋. Có thể sửa tiêu đề hoặc nội dung riêng cho từng buổi.</p>
+</div></section>
+<section id="topicsView" hidden><div class="panel"><div class="toolbar" style="justify-content:space-between"><div><h2 style="margin-bottom:3px">Thư viện chủ đề yoga</h2><div class="muted">Chọn nhanh chủ đề đã lưu hoặc thêm chủ đề mới.</div></div><button class="btn" id="addTopic">＋ Thêm chủ đề</button></div><input id="topicSearch" placeholder="Tìm chủ đề..." style="margin-bottom:12px"><div class="topic-grid" id="topicGrid"></div></div></section>
+<section id="settingsView" hidden><div class="panel"><h2>Thông tin hiển thị trên lịch</h2><div class="formgrid">
+<div class="field"><label>Tên studio / lớp yoga</label><input id="studioName" value="Khuyến's Yoga Home"></div>
+<div class="field"><label>Tiêu đề lịch</label><input id="scheduleTitle" value="LỊCH TẬP YOGA HÀNG TUẦN"></div>
+<div class="field"><label>Số điện thoại</label><input id="phone" placeholder="Nhập số điện thoại"></div>
+<div class="field"><label>Địa chỉ / khu vực</label><input id="address" placeholder="Nhập địa chỉ"></div>
+<div class="field full"><label>Ghi chú cuối lịch</label><textarea id="footerText" rows="2">*** Tất cả các loại hình yoga đều mang lại sức khỏe tổng thể về mặt thể chất và tinh thần.</textarea></div>
+</div><button class="btn" id="saveSettings">Lưu thông tin</button><hr style="border:0;border-top:1px solid var(--line);margin:18px 0"><h2>Dữ liệu ứng dụng</h2><p class="hint">Dữ liệu được lưu trên trình duyệt của điện thoại này. Hãy dùng nút Sao lưu để tải file dữ liệu về máy và phục hồi khi đổi điện thoại hoặc trình duyệt.</p><div class="toolbar"><button class="btn-outline" id="importBtn">Nhập bản sao lưu</button><input type="file" id="importFile" accept=".json,application/json" hidden><button class="btn-outline" id="resetBtn">Khôi phục dữ liệu mẫu</button></div></div></section>
+<footer>Khuyến's Yoga Planner · Dữ liệu được lưu trên thiết bị của bạn</footer>
+</main>
+<div class="modal" id="editModal"><div class="dialog"><h2 id="editTitle">Chọn chủ đề cho buổi học</h2>
+<div class="field"><label>Chủ đề</label><select id="topicSelect"></select></div>
+<div class="field"><label>Tên chủ đề hiển thị</label><input id="customTitle" placeholder="Ví dụ: HATHA"></div>
+<div class="field"><label>Mô tả nội dung buổi học</label><textarea id="customDesc" rows="4" placeholder="Mục tiêu và nội dung buổi học..."></textarea></div>
+<div class="field"><label>Ghi chú riêng (không bắt buộc)</label><input id="customNote" placeholder="Ví dụ: Lớp cơ bản / dụng cụ..."></div>
+<div class="dialog-actions"><button class="btn-danger" id="removeSlot">Xóa buổi</button><button class="btn-outline" id="cancelEdit">Đóng</button><button class="btn" id="saveSlot">Lưu buổi học</button></div></div></div>
+<div class="modal" id="topicModal"><div class="dialog"><h2 id="topicModalTitle">Thêm chủ đề</h2><div class="field"><label>Tên chủ đề</label><input id="topicName" placeholder="Ví dụ: HATHA"></div><div class="field"><label>Mô tả nội dung</label><textarea id="topicDesc" rows="4" placeholder="Mục tiêu, lợi ích và nội dung chính..."></textarea></div><div class="dialog-actions"><button class="btn-outline" id="cancelTopic">Hủy</button><button class="btn" id="saveTopic">Lưu chủ đề</button></div></div></div>
+<div class="modal" id="exportModal"><div class="dialog"><h2>Xuất lịch để gửi học viên</h2><p class="hint">Ảnh lịch có bố cục ngang giống mẫu anh gửi. Trên điện thoại, hãy xoay ngang nếu muốn xem trước toàn bộ lịch.</p><div class="export-card" id="exportPreview"><b>Ảnh lịch tuần sẽ được tạo từ lịch hiện tại.</b><p class="muted">Có thể tải PNG hoặc dùng Chia sẻ nếu điện thoại hỗ trợ.</p></div><div class="dialog-actions"><button class="btn-outline" id="closeExport">Đóng</button><button class="btn" id="downloadPng">Tải ảnh PNG</button><button class="btn-outline" id="sharePng">Chia sẻ ảnh</button></div></div></div>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script>
+const days=['THỨ 2','THỨ 3','THỨ 4','THỨ 5','THỨ 6','THỨ 7'];
+const times=['5:10 - 6:10','5:15 - 6:15','6:30 - 7:30','8:20 - 9:20','19:30 - 20:30'];
+const starterTopics=[
+['HATHA','Tăng sức mạnh và độ linh hoạt cho cơ thể giảm đau vai cổ gáy'],
+['SHOULDER & UPPER BACK','Giải phóng căng cứng vùng vai cổ, mở rộng lồng ngực, tăng độ linh hoạt cho khớp vai, tăng sức mạnh lưng trên.'],
+['MIX YOGA','Chuỗi yoga tổng hợp tăng sức mạnh và giúp cơ thể linh hoạt'],
+['POWER FLOW','Đốt cháy calo mạnh mẽ, tăng độ bền và sức mạnh cho các nhóm cơ'],
+['WHEEL & BLOCK','Yoga với vòng và gạch, kéo giãn và thư giãn vùng lưng giúp cột sống khỏe'],
+['BACKBEND & TWIST','Giúp cột sống khỏe - dẻo dai, tăng sức mạnh cho cơ lưng và cải thiện hô hấp, hỗ trợ tiêu hóa'],
+['HIP OPENING','Mở rộng và kéo giãn các cơ vùng hông, tăng cường linh hoạt và vận động cho hông, giảm đau lưng dưới.'],
+['STRAP & BLOCK','Mở vai ngực và tăng linh hoạt cho cơ thể'],
+['DYNAMIC FLOW','Tăng độ linh hoạt cho khớp và dẻo dai cho cột sống. Đốt calo, tăng sức bền.'],
+['INSIDE FLOW','Tăng sức bền giúp chuyển động mượt mà, liên tục. Kiểm soát cơ thể và tập trung kết nối bên trong'],
+['CORE','Đốt mỡ, tăng sức mạnh các nhóm cơ, giảm đau lưng và ổn định tư thế'],
+['BALANCE','Chuỗi thăng bằng cơ bản giúp duy trì kiểm soát cơ thể, tăng tập trung và sức mạnh cho cơ thể']
+];
+const seedSchedule={
+0:{0:0,3:0},1:{1:0,4:0},2:{0:3,3:3},3:{1:11,4:11},4:{0:9,3:9},5:{0:7,3:7}
+};
+const $=id=>document.getElementById(id);
+let data=JSON.parse(localStorage.getItem('kyoga-data')||'null');
+if(!data)data={topics:starterTopics.map((x,i)=>({id:'t'+i,name:x[0],desc:x[1]})),weeks:{},settings:{studio:"Khuyến's Yoga Home",title:'LỊCH TẬP YOGA HÀNG TUẦN',phone:'',address:'',footer:'*** Tất cả các loại hình yoga đều mang lại sức khỏe tổng thể về mặt thể chất và tinh thần.'}};
+let activeWeek='',editCell=null,editTopicId=null,exportCanvas=null;
+function save(){localStorage.setItem('kyoga-data',JSON.stringify(data))}
+function monday(date){let d=new Date(date+'T12:00:00');let day=(d.getDay()+6)%7;d.setDate(d.getDate()-day);return d.toISOString().slice(0,10)}
+function shiftDate(date,n){let d=new Date(date+'T12:00:00');d.setDate(d.getDate()+n);return d.toISOString().slice(0,10)}
+function week(){return data.weeks[activeWeek]||(data.weeks[activeWeek]={})}
+function cellKey(t,d){return t+'-'+d}
+function switchTab(tab){document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));['schedule','topics','settings'].forEach(x=>$(x+'View').hidden=x!==tab);if(tab==='topics')renderTopics()}
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>switchTab(b.dataset.tab));
+function renderSchedule(){
+ let h='<thead><tr><th>THỜI GIAN</th>'+days.map(x=>'<th>'+x+'</th>').join('')+'</tr></thead><tbody>';
+ times.forEach((tm,t)=>{h+='<tr><td class="time">'+tm+'</td>';days.forEach((d,di)=>{let c=week()[cellKey(t,di)];h+='<td><button class="slot '+(c?'':'empty')+'" data-t="'+t+'" data-d="'+di+'">'+(c?'<strong>'+esc(c.title)+'</strong><span>'+esc(c.desc)+'</span>':'<strong>＋ Thêm buổi</strong>')+'</button></td>'});h+='</tr>'});$('scheduleTable').innerHTML=h+'</tbody>';
+ document.querySelectorAll('.slot').forEach(b=>b.onclick=()=>openCell(+b.dataset.t,+b.dataset.d));
+ $('classCount').textContent=Object.keys(week()).length;$('topicCount').textContent=data.topics.length;
+}
+function esc(s=''){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function openCell(t,d){editCell={t,d};let c=week()[cellKey(t,d)];$('editTitle').textContent=days[d]+' · '+times[t];$('topicSelect').innerHTML='<option value="">-- Chọn chủ đề --</option>'+data.topics.map(x=>'<option value="'+x.id+'">'+esc(x.name)+'</option>').join('');if(c){let found=data.topics.find(x=>x.name===c.title);$('topicSelect').value=found?.id||'';$('customTitle').value=c.title;$('customDesc').value=c.desc;$('customNote').value=c.note||''}else{$('topicSelect').value='';$('customTitle').value='';$('customDesc').value='';$('customNote').value=''}$('removeSlot').style.display=c?'inline-block':'none';$('editModal').classList.add('show')}
+$('topicSelect').onchange=()=>{let x=data.topics.find(a=>a.id===$('topicSelect').value);if(x){$('customTitle').value=x.name;$('customDesc').value=x.desc}};
+$('saveSlot').onclick=()=>{let title=$('customTitle').value.trim(),desc=$('customDesc').value.trim();if(!title){alert('Vui lòng chọn hoặc nhập tên chủ đề.');return}week()[cellKey(editCell.t,editCell.d)]={title,desc,note:$('customNote').value.trim()};save();$('editModal').classList.remove('show');renderSchedule()};
+$('removeSlot').onclick=()=>{delete week()[cellKey(editCell.t,editCell.d)];save();$('editModal').classList.remove('show');renderSchedule()};
+$('cancelEdit').onclick=()=>$('editModal').classList.remove('show');
+function renderTopics(){let q=$('topicSearch').value.toLowerCase();$('topicGrid').innerHTML=data.topics.filter(x=>(x.name+x.desc).toLowerCase().includes(q)).map(x=>'<article class="topic"><h3>'+esc(x.name)+'</h3><p>'+esc(x.desc)+'</p><div class="topic-actions"><button class="btn-outline" data-edit="'+x.id+'">Sửa</button><button class="btn-danger" data-del="'+x.id+'">Xóa</button></div></article>').join('')||'<p class="muted">Chưa có chủ đề phù hợp.</p>';document.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>editTopic(b.dataset.edit));document.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>deleteTopic(b.dataset.del))}
+$('topicSearch').oninput=renderTopics;
+function editTopic(id){let x=data.topics.find(a=>a.id===id);editTopicId=id;$('topicModalTitle').textContent='Chỉnh sửa chủ đề';$('topicName').value=x.name;$('topicDesc').value=x.desc;$('topicModal').classList.add('show')}
+$('addTopic').onclick=()=>{editTopicId=null;$('topicModalTitle').textContent='Thêm chủ đề mới';$('topicName').value='';$('topicDesc').value='';$('topicModal').classList.add('show')};
+$('cancelTopic').onclick=()=>$('topicModal').classList.remove('show');
+$('saveTopic').onclick=()=>{let name=$('topicName').value.trim(),desc=$('topicDesc').value.trim();if(!name){alert('Vui lòng nhập tên chủ đề.');return}if(editTopicId){Object.assign(data.topics.find(x=>x.id===editTopicId),{name,desc})}else data.topics.push({id:'t'+Date.now(),name,desc});save();$('topicModal').classList.remove('show');renderTopics();renderSchedule()};
+function deleteTopic(id){if(!confirm('Xóa chủ đề này khỏi thư viện? Các buổi đã xếp vẫn giữ nội dung hiện tại.'))return;data.topics=data.topics.filter(x=>x.id!==id);save();renderTopics();renderSchedule()}
+function loadSettings(){let s=data.settings;[['studioName','studio'],['scheduleTitle','title'],['phone','phone'],['address','address'],['footerText','footer']].forEach(([a,b])=>$(a).value=s[b]||'')}
+$('saveSettings').onclick=()=>{data.settings={studio:$('studioName').value,title:$('scheduleTitle').value,phone:$('phone').value,address:$('address').value,footer:$('footerText').value};save();alert('Đã lưu thông tin.');};
+$('weekDate').value=monday(new Date().toISOString().slice(0,10));activeWeek=$('weekDate').value;
+$('weekDate').onchange=()=>{activeWeek=monday($('weekDate').value);$('weekDate').value=activeWeek;renderSchedule()};
+$('prevWeek').onclick=()=>{$('weekDate').value=activeWeek=shiftDate(activeWeek,-7);renderSchedule()};
+$('nextWeek').onclick=()=>{$('weekDate').value=activeWeek=shiftDate(activeWeek,7);renderSchedule()};
+$('copyWeek').onclick=()=>{let prev=shiftDate(activeWeek,-7);if(!data.weeks[prev]||!Object.keys(data.weeks[prev]).length){alert('Tuần trước chưa có lịch để sao chép.');return}if(!confirm('Sao chép lịch tuần trước vào tuần này? Lịch tuần này sẽ được thay thế.'))return;data.weeks[activeWeek]=JSON.parse(JSON.stringify(data.weeks[prev]));save();renderSchedule()};
+$('clearWeek').onclick=()=>{if(confirm('Xóa toàn bộ buổi học của tuần này?')){data.weeks[activeWeek]={};save();renderSchedule()}};
+function dateLabel(date){let d=new Date(date+'T12:00:00');return d.toLocaleDateString('vi-VN',{day:'2-digit',month:'2-digit',year:'numeric'})}
+function buildExportNode(){
+ let s=data.settings, wk=week(),start=new Date(activeWeek+'T12:00:00'),end=new Date(shiftDate(activeWeek,5)+'T12:00:00');
+ let root=document.createElement('div');root.style.cssText='width:1500px;background:#fff;color:#203b59;font-family:Arial,sans-serif;padding:0;position:fixed;left:-10000px;top:0';
+ let top=document.createElement('div');top.style.cssText='height:145px;background:#183b60;color:white;display:flex;align-items:center;justify-content:space-between;padding:0 34px';
+ top.innerHTML='<div><div style="font-size:17px;letter-spacing:2px;color:#d5e3f0">'+esc(s.studio||"Khuyến's Yoga Home")+'</div><div style="font-size:31px;font-weight:bold;margin-top:9px">'+esc(s.title||'LỊCH TẬP YOGA HÀNG TUẦN')+'</div><div style="font-size:15px;margin-top:7px;color:#d5e3f0">TUẦN '+dateLabel(activeWeek)+' – '+dateLabel(shiftDate(activeWeek,5))+'</div></div><div style="width:100px;height:100px;border:2px solid #d4c18d;border-radius:50%;display:grid;place-items:center;font-size:48px">ॐ</div>';
+ root.appendChild(top);
+ let table=document.createElement('table');table.style.cssText='width:100%;border-collapse:collapse;table-layout:fixed;background:#f5f3e9';
+ let head='<tr><th style="width:130px;background:#d8e7f7;padding:15px 8px;border:1px solid #8da3ba">THỜI GIAN</th>'+days.map((d,i)=>'<th style="background:#d8e7f7;padding:15px 8px;border:1px solid #8da3ba;font-size:17px">'+d+'<div style="font-size:12px;font-weight:normal;margin-top:4px">'+dateLabel(shiftDate(activeWeek,i))+'</div></th>').join('')+'</tr>';
+ let body=times.map((tm,t)=>'<tr><td style="background:#d8e7f7;font-weight:bold;text-align:center;border:1px solid #aebdce;padding:15px 6px;font-size:15px">'+tm+'</td>'+days.map((d,i)=>{let c=wk[cellKey(t,i)];return '<td style="height:132px;border:1px solid #bdbdb4;text-align:center;vertical-align:middle;padding:12px 8px">'+(c?'<div style="font-weight:bold;font-size:16px;margin-bottom:9px;color:#1e4266">'+esc(c.title)+'</div><div style="font-size:14px;line-height:1.45">'+esc(c.desc)+'</div>'+(c.note?'<div style="font-size:12px;margin-top:7px;color:#7b6a4a">'+esc(c.note)+'</div>':''):'')+'</td>'}).join('')+'</tr>').join('');
+ table.innerHTML='<thead>'+head+'</thead><tbody>'+body+'</tbody>';root.appendChild(table);
+ let foot=document.createElement('div');foot.style.cssText='padding:18px 24px 22px;font-size:14px;color:#334d68;border-bottom:8px solid #183b60;display:flex;justify-content:space-between;gap:25px';foot.innerHTML='<div>'+esc(s.footer||'')+'</div><div style="text-align:right;white-space:nowrap">'+esc(s.phone||'')+(s.address?' · '+esc(s.address):'')+'</div>';root.appendChild(foot);document.body.appendChild(root);return root
+}
+$('exportBtn').onclick=()=>{$('exportModal').classList.add('show');$('exportPreview').innerHTML='<b>Đang chuẩn bị ảnh lịch…</b>';exportCanvas=null;};
+async function makeCanvas(){if(!window.html2canvas){alert('Không tải được công cụ xuất ảnh. Vui lòng kiểm tra Internet rồi thử lại.');return null}let node=buildExportNode();try{let c=await html2canvas(node,{scale:1,backgroundColor:'#ffffff',useCORS:true});return c}finally{node.remove()}}
+$('downloadPng').onclick=async()=>{let c=await makeCanvas();if(!c)return;exportCanvas=c;let a=document.createElement('a');a.download='Lich-yoga-'+activeWeek+'.png';a.href=c.toDataURL('image/png');a.click();$('exportPreview').innerHTML='<b>Đã tạo ảnh lịch.</b><p class="muted">Ảnh PNG đã được tải xuống thiết bị.</p>'};
+$('sharePng').onclick=async()=>{let c=await makeCanvas();if(!c)return;let blob=await new Promise(r=>c.toBlob(r,'image/png'));let file=new File([blob],'Lich-yoga-'+activeWeek+'.png',{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file],title:'Lịch tập yoga tuần '+activeWeek})}catch(e){}}else{let a=document.createElement('a');a.href=c.toDataURL('image/png');a.download='Lich-yoga-'+activeWeek+'.png';a.click();alert('Điện thoại chưa hỗ trợ chia sẻ ảnh trực tiếp. Ảnh đã được tải về, bạn gửi qua Zalo nhé.')}}
+$('closeExport').onclick=()=>$('exportModal').classList.remove('show');
+$('backupBtn').onclick=()=>{let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='khuyens-yoga-backup.json';a.click();URL.revokeObjectURL(a.href)};
+$('importBtn').onclick=()=>$('importFile').click();
+$('importFile').onchange=async e=>{let f=e.target.files[0];if(!f)return;try{let d=JSON.parse(await f.text());if(!d.topics||!d.weeks)throw Error();data=d;save();loadSettings();renderSchedule();alert('Đã phục hồi dữ liệu.')}catch(err){alert('File sao lưu không hợp lệ.')}e.target.value=''};
+$('resetBtn').onclick=()=>{if(confirm('Khôi phục thư viện mẫu? Lịch và chủ đề hiện tại sẽ bị thay thế.')){localStorage.removeItem('kyoga-data');location.reload()}};
+loadSettings();renderSchedule();
+let deferredPrompt;window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('installBtn').style.display='block'});$('installBtn').onclick=async()=>{if(deferredPrompt){deferredPrompt.prompt();deferredPrompt=null}else alert('Mở menu trình duyệt Chrome và chọn “Thêm vào màn hình chính”.')};
+if('serviceWorker'in navigator && location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});
+</script></body></html>
